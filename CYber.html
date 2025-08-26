@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comprehensive Cybersecurity Overview</title>
+    <title>Interactive Cybersecurity Flowchart</title>
     <style>
         * {
             margin: 0;
@@ -13,961 +13,1195 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
             min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
+            color: #333;
+            overflow-x: auto;
         }
 
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: rgba(0,0,0,0.9);
             color: white;
-            padding: 30px;
+            padding: 20px;
             text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+        .controls {
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
-        .content {
-            padding: 30px;
-        }
-
-        .domain {
-            margin-bottom: 40px;
-            border: 2px solid #e74c3c;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .domain-header {
+        .control-btn {
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
             color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .control-btn.active {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+
+        .flowchart-container {
             padding: 20px;
-            font-size: 1.4rem;
+            display: flex;
+            justify-content: center;
+            min-height: calc(100vh - 120px);
+        }
+
+        .flowchart {
+            width: 100%;
+            max-width: 1600px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            align-items: start;
+        }
+
+        .domain-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .flowchart-node {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flowchart-node::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #e74c3c, #f39c12, #27ae60, #3498db, #9b59b6);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .flowchart-node:hover::before {
+            opacity: 1;
+        }
+
+        .flowchart-node:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .interactive {
+            border-color: #27ae60;
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%);
+        }
+
+        .non-interactive {
+            border-color: #e74c3c;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%);
+        }
+
+        .node-header {
+            padding: 20px;
+            font-size: 1.2rem;
             font-weight: bold;
+            text-align: center;
+            position: relative;
+        }
+
+        .interactive .node-header {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
 
-        .domain-content {
-            padding: 20px;
-            background: #f8f9fa;
-        }
-
-        .category {
-            margin-bottom: 25px;
-            border: 1px solid #3498db;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .category-header {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        .non-interactive .node-header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
             color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .classification-badge {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: normal;
+            backdrop-filter: blur(5px);
+        }
+
+        .interactive .classification-badge {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .non-interactive .classification-badge {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .node-content {
+            padding: 20px;
+        }
+
+        .concept-item {
+            margin-bottom: 15px;
             padding: 15px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            cursor: pointer;
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
             transition: all 0.3s ease;
         }
 
-        .category-header:hover {
-            background: linear-gradient(135deg, #2980b9 0%, #1f5f8b 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .category-content {
-            padding: 15px;
-            background: white;
-        }
-
-        .concept {
-            margin-bottom: 20px;
-            border-left: 4px solid #27ae60;
-            padding-left: 15px;
-            background: #f1f8f4;
-            border-radius: 0 8px 8px 0;
-            padding: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .concept:hover {
+        .concept-item:hover {
+            background: rgba(52, 152, 219, 0.1);
             transform: translateX(5px);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
 
         .concept-name {
             font-weight: bold;
-            color: #27ae60;
-            font-size: 1.1rem;
+            color: #2c3e50;
             margin-bottom: 8px;
+            font-size: 1rem;
         }
 
-        .concept-definition {
+        .concept-description {
             color: #555;
+            font-size: 0.9rem;
+            line-height: 1.5;
             margin-bottom: 8px;
-            font-style: italic;
         }
 
         .concept-example {
-            color: #7f8c8d;
-            font-size: 0.95rem;
             background: white;
             padding: 10px;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #666;
             border: 1px solid #ecf0f1;
+            font-style: italic;
         }
 
-        .subconcept {
-            margin-left: 20px;
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
             margin-top: 10px;
-            border-left: 3px solid #f39c12;
-            padding-left: 12px;
-            background: #fef9e7;
-            border-radius: 0 5px 5px 0;
-            padding: 10px;
         }
 
-        .subconcept-name {
-            font-weight: 600;
-            color: #f39c12;
-            margin-bottom: 5px;
-        }
-
-        .attack-type {
-            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            display: inline-block;
-            margin: 2px;
-            font-size: 0.9rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .tech-badge {
+        .tech-tag {
             background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
             color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            display: inline-block;
-            margin: 2px;
-            font-size: 0.9rem;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .navigation {
-            background: #34495e;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .nav-button {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        .attack-tag {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
             color: white;
-            padding: 10px 20px;
-            margin: 0 10px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .nav-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        .connection-line {
+            position: absolute;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            height: 2px;
+            z-index: -1;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .expanded .node-content {
+            max-height: none;
+            overflow: visible;
+        }
+
+        .collapse-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .collapse-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 20px;
+            margin: -30px -30px 20px -30px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .legend {
+            position: fixed;
+            top: 120px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 10px;
+            border: 2px solid transparent;
+        }
+
+        .legend-interactive {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+
+        .legend-non-interactive {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
         }
 
         @media (max-width: 768px) {
-            .header h1 { font-size: 2rem; }
-            .content { padding: 20px; }
-            .concept { margin-left: 0; }
-            .subconcept { margin-left: 10px; }
+            .flowchart {
+                grid-template-columns: 1fr;
+            }
+            
+            .legend {
+                position: static;
+                margin: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .filter-active {
+            opacity: 1;
+            display: block;
+        }
+
+        .filter-inactive {
+            opacity: 0.3;
+            display: none;
+        }
+
+        .search-container {
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-input {
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 1rem;
+            width: 300px;
+            max-width: 90%;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🛡️ Comprehensive Cybersecurity Overview</h1>
-            <p>A detailed hierarchical guide to cybersecurity concepts, technologies, and implementations</p>
+    <div class="header">
+        <h1>🛡️ Interactive Cybersecurity Flowchart</h1>
+        <p>Navigate through cybersecurity concepts with interactive and non-interactive classifications</p>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="🔍 Search cybersecurity concepts..." id="searchInput">
         </div>
-
-        <div class="content">
-            <!-- Core Principles Domain -->
-            <div class="domain">
-                <div class="domain-header">🔐 Core Principles & Fundamentals</div>
-                <div class="domain-content">
-                    <div class="category">
-                        <div class="category-header">CIA Triad - Foundation of Information Security</div>
-                        <div class="category-content">
-                            <div class="concept">
-                                <div class="concept-name">Confidentiality</div>
-                                <div class="concept-definition">Ensuring information is accessible only to authorized individuals, entities, or processes</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Medical records encrypted in a hospital database where only authorized doctors and nurses can access patient information using role-based access controls.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Data Classification</div>
-                                    <div>Categorizing data based on sensitivity (Public, Internal, Confidential, Restricted)</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Access Controls</div>
-                                    <div>Mechanisms to restrict access (DAC, MAC, RBAC, ABAC)</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Integrity</div>
-                                <div class="concept-definition">Maintaining accuracy and completeness of data throughout its lifecycle</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Digital signatures on software updates ensuring the code hasn't been tampered with during distribution from the vendor to end users.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Data Validation</div>
-                                    <div>Input validation, checksums, hash functions</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Version Control</div>
-                                    <div>Change tracking and audit trails</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Availability</div>
-                                <div class="concept-definition">Ensuring information and resources are accessible when needed by authorized users</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Netflix's distributed architecture with multiple data centers ensuring 99.9% uptime even during peak traffic or system failures.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Redundancy</div>
-                                    <div>Backup systems, failover mechanisms, load balancing</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Disaster Recovery</div>
-                                    <div>Business continuity planning, recovery procedures</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Anonymity</div>
-                                <div class="concept-definition">Protecting the identity of individuals in communications and transactions</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Tor browser allowing users to browse the internet without revealing their IP address or location to websites or network observers.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Traffic Analysis Resistance</div>
-                                    <div>Preventing correlation attacks through timing and volume analysis</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Identity Unlinkability</div>
-                                    <div>Ensuring actions cannot be linked to specific individuals</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Identity & Access Management Domain -->
-            <div class="domain">
-                <div class="domain-header">🔑 Identity & Access Management (IAM)</div>
-                <div class="domain-content">
-                    <div class="category">
-                        <div class="category-header">Authentication & Identity Components</div>
-                        <div class="category-content">
-                            <div class="concept">
-                                <div class="concept-name">Identity</div>
-                                <div class="concept-definition">A unique representation of a user, device, or service within a system</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Your Google account identity includes your email, profile information, and associated services, allowing Google to recognize you across Gmail, Drive, and YouTube.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Digital Identity</div>
-                                    <div>Online representation including usernames, email addresses, certificates</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Identity Federation</div>
-                                    <div>Single Sign-On (SSO) across multiple systems</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Credentials</div>
-                                <div class="concept-definition">Evidence used to verify identity during authentication processes</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Banking app using multiple credentials: your username/password (something you know), SMS code (something you have), and fingerprint (something you are).</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Multi-Factor Authentication (MFA)</div>
-                                    <div>Something you know, have, and are</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Credential Management</div>
-                                    <div>Password policies, credential rotation, secure storage</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Claims</div>
-                                <div class="concept-definition">Assertions about a user's identity, attributes, or permissions</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> JWT token containing claims like user role ("admin"), department ("engineering"), and expiration time, allowing microservices to make authorization decisions.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Security Tokens</div>
-                                    <div>JWT, SAML tokens containing encoded claims</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Attribute-Based Access Control</div>
-                                    <div>Authorization based on user attributes and environmental factors</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Public Key Infrastructure (PKI)</div>
-                                <div class="concept-definition">Framework for creating, managing, and validating digital certificates and public-private key pairs</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> HTTPS certificates on websites verified by Certificate Authorities like Let's Encrypt, ensuring secure communication between browsers and web servers.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Public Key</div>
-                                    <div>Openly shared cryptographic key used for encryption and signature verification</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Private Key</div>
-                                    <div>Secretly held key used for decryption and digital signing</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Salt</div>
-                                    <div>Random data added to passwords before hashing to prevent rainbow table attacks</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cryptography & Data Protection Domain -->
-            <div class="domain">
-                <div class="domain-header">🔒 Cryptography & Data Protection</div>
-                <div class="domain-content">
-                    <div class="category">
-                        <div class="category-header">Cryptographic Functions & Protocols</div>
-                        <div class="category-content">
-                            <div class="concept">
-                                <div class="concept-name">Pseudorandom Functions (PRF)</div>
-                                <div class="concept-definition">Efficiently computable functions that appear random to any computationally bounded adversary</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> AES encryption using PRFs to generate seemingly random ciphertext from plaintext, making it impossible for attackers to detect patterns.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Key Derivation Functions</div>
-                                    <div>PBKDF2, scrypt, Argon2 for generating encryption keys</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Stream Ciphers</div>
-                                    <div>Using PRF output as keystream for encryption</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Hash-based Message Authentication Code (HMAC)</div>
-                                <div class="concept-definition">Cryptographic authentication code involving a hash function and a secret key</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> API authentication where each request includes an HMAC signature, allowing the server to verify the request hasn't been tampered with and comes from an authorized client.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Message Integrity</div>
-                                    <div>Detecting unauthorized alterations to data</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Authentication Protocols</div>
-                                    <div>Challenge-response mechanisms using HMAC</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Oblivious Pseudorandom Functions (OPRF)</div>
-                                <div class="concept-definition">Cryptographic protocol allowing computation of PRF without revealing inputs to either party</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Password managers using OPRF to check if your password appears in breach databases without revealing your actual password to the service.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Privacy-Preserving Protocols</div>
-                                    <div>Secure multi-party computation applications</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Private Set Intersection</div>
-                                    <div>Finding common elements without revealing sets</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="category">
-                        <div class="category-header">Digital Signatures & Authentication</div>
-                        <div class="category-content">
-                            <div class="concept">
-                                <div class="concept-name">Standard Digital Signatures</div>
-                                <div class="concept-definition">Cryptographic mechanism linking a signature to a specific signer and document</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Software developers signing code releases with RSA or ECDSA signatures, allowing users to verify the software came from the legitimate publisher.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">RSA Signatures</div>
-                                    <div>Based on integer factorization problem</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">ECDSA</div>
-                                    <div>Elliptic curve-based signatures for better efficiency</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Group Signatures</div>
-                                <div class="concept-definition">Allow group member to sign on behalf of group while maintaining anonymity within the group</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Anonymous employee feedback systems where any employee can submit signed feedback that's verifiably from a company employee, but doesn't reveal which specific employee.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Group Manager</div>
-                                    <div>Entity responsible for group key management</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Revocation Mechanisms</div>
-                                    <div>Removing compromised members from groups</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Ring Signatures</div>
-                                <div class="concept-definition">Signature scheme where any member of a group can produce signature on behalf of group without revealing identity</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Monero cryptocurrency transactions using ring signatures to hide the actual sender among a group of possible senders, providing transaction privacy.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Spontaneous Groups</div>
-                                    <div>No central authority or pre-setup required</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Linkable Ring Signatures</div>
-                                    <div>Preventing double-spending while maintaining privacy</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Blind Signatures</div>
-                                <div class="concept-definition">Signatures where signer cannot see content being signed, providing privacy for signature requestor</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Digital cash systems where a bank signs withdrawal tokens without seeing their serial numbers, enabling untraceable electronic payments.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Unlinkability</div>
-                                    <div>Preventing correlation between signature creation and usage</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">E-voting Applications</div>
-                                    <div>Ensuring vote privacy while maintaining verification</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="category">
-                        <div class="category-header">Homomorphic Encryption</div>
-                        <div class="category-content">
-                            <div class="concept">
-                                <div class="concept-name">Fully Homomorphic Encryption (FHE)</div>
-                                <div class="concept-definition">Encryption allowing arbitrary computations on encrypted data without decryption</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Cloud computing where a hospital can outsource encrypted patient data analysis to a cloud provider who can run diagnostic algorithms without ever seeing the actual patient information.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Bootstrapping</div>
-                                    <div>Technique to refresh ciphertext and enable unlimited operations</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Lattice-based Schemes</div>
-                                    <div>BGV, BFV, CKKS schemes for different operation types</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Somewhat Homomorphic Encryption (SHE)</div>
-                                <div class="concept-definition">Supports limited number of operations before noise overwhelms the computation</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Financial institutions performing limited statistical analysis on encrypted customer data for fraud detection without exposing individual transaction details.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Noise Management</div>
-                                    <div>Controlling accumulated noise during computations</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Depth Limitations</div>
-                                    <div>Maximum circuit depth before decryption failure</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Partially Homomorphic Encryption (PHE)</div>
-                                <div class="concept-definition">Supports only one type of operation (either addition or multiplication) unlimited times</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> ElGamal encryption for secure voting systems where encrypted votes can be added together to get final tallies without revealing individual votes.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Additive Schemes</div>
-                                    <div>Paillier, ElGamal for addition operations</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Multiplicative Schemes</div>
-                                    <div>RSA for multiplication operations</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Leveled Fully Homomorphic Encryption (LFHE)</div>
-                                <div class="concept-definition">FHE with predetermined maximum circuit depth, avoiding bootstrapping complexity</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Genome analysis where researchers can perform specific, predetermined genetic analysis algorithms on encrypted DNA data with known computational requirements.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Circuit Optimization</div>
-                                    <div>Minimizing depth for specific applications</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Parameter Selection</div>
-                                    <div>Choosing security parameters for target depth</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="category">
-                        <div class="category-header">Zero-Knowledge Proofs</div>
-                        <div class="category-content">
-                            <div class="concept">
-                                <div class="concept-name">zk-SNARKs (Zero-Knowledge Succinct Non-Interactive Arguments of Knowledge)</div>
-                                <div class="concept-definition">Compact proofs allowing verification of computation correctness without revealing inputs</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Zcash cryptocurrency where users can prove they have sufficient funds for a transaction without revealing their actual balance or transaction history.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Trusted Setup</div>
-                                    <div>Initial ceremony to generate proving and verifying keys</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Circuit Compilation</div>
-                                    <div>Converting computations to arithmetic circuits</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">zk-STARKs (Zero-Knowledge Scalable Transparent Arguments of Knowledge)</div>
-                                <div class="concept-definition">Zero-knowledge proofs without trusted setup, using collision-resistant hash functions</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> StarkNet blockchain using zk-STARKs to bundle thousands of transactions into a single proof, dramatically reducing on-chain verification costs while maintaining privacy.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Transparency</div>
-                                    <div>No trusted setup required, publicly verifiable randomness</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Post-Quantum Security</div>
-                                    <div>Resistance to quantum computer attacks</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Bulletproofs</div>
-                                <div class="concept-definition">Short non-interactive zero-knowledge proofs without trusted setup for arithmetic circuits</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Monero using Bulletproofs to prove transaction amounts are positive without revealing actual amounts, reducing transaction size by 80% compared to previous methods.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Range Proofs</div>
-                                    <div>Proving values lie within specific ranges</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Aggregation</div>
-                                    <div>Combining multiple proofs into single compact proof</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Blockchain & Transaction Privacy Domain -->
-            <div class="domain">
-                <div class="domain-header">⛓️ Blockchain & Transaction Privacy</div>
-                <div class="domain-content">
-                    <div class="category">
-                        <div class="category-header">Privacy-Enhancing Technologies</div>
-                        <div class="category-content">
-                            <div class="concept">
-                                <div class="concept-name">Mixers & Tumblers</div>
-                                <div class="concept-definition">Services that obscure transaction trails by mixing multiple users' funds together</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Tornado Cash (before regulatory issues) allowed Ethereum users to deposit ETH and later withdraw equivalent amounts to different addresses, breaking the transaction link.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Centralized Mixers</div>
-                                    <div>Third-party services handling the mixing process</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Decentralized Protocols</div>
-                                    <div>Smart contract-based mixing without trusted intermediaries</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">CoinJoin & CoinSwap/Shuffle</div>
-                                <div class="concept-definition">Collaborative transaction protocols where multiple users combine their transactions to obscure ownership</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Wasabi Wallet implementing CoinJoin where multiple Bitcoin users create a single large transaction with multiple inputs and outputs, making it difficult to trace which input corresponds to which output.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Equal Output Values</div>
-                                    <div>Using standard denomination amounts to increase anonymity set</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Coordination Protocols</div>
-                                    <div>Secure multi-party protocols for transaction construction</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">RingCT (Ring Confidential Transactions)</div>
-                                <div class="concept-definition">Combination of ring signatures and confidential transactions to hide both sender and transaction amounts</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Monero transactions using RingCT where observers cannot determine who sent money, who received it, or how much was transferred, providing comprehensive transaction privacy.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Stealth Addresses</div>
-                                    <div>One-time addresses for each transaction to hide recipients</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Pedersen Commitments</div>
-                                    <div>Cryptographic commitments to hide transaction amounts</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">zk-Rollups</div>
-                                <div class="concept-definition">Layer 2 scaling solution using zero-knowledge proofs to batch transactions while maintaining privacy</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Polygon zkEVM processing thousands of Ethereum transactions off-chain, then submitting a single proof to mainnet that validates all transactions without revealing individual transaction details.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">State Transitions</div>
-                                    <div>Proving correctness of batched state changes</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Data Availability</div>
-                                    <div>Ensuring transaction data remains accessible for verification</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">BOLT Protocol (Blind Off-chain Lightweight Transactions)</div>
-                                <div class="concept-definition">Privacy-preserving payment channel protocol using blind signatures for anonymous micropayments</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Theoretical implementation for private Lightning Network payments where intermediate routing nodes cannot determine payment amounts or link sender to receiver.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Anonymous Channels</div>
-                                    <div>Payment channels with hidden balances and participants</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Unlinkable Payments</div>
-                                    <div>Preventing correlation of multiple payments through same channel</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Network Security Domain -->
-            <div class="domain">
-                <div class="domain-header">🌐 Network Security</div>
-                <div class="domain-content">
-                    <div class="category">
-                        <div class="category-header">Network Layer Privacy & Protection</div>
-                        <div class="category-content">
-                            <div class="concept">
-                                <div class="concept-name">Network Layer Privacy</div>
-                                <div class="concept-definition">Protecting metadata and communication patterns at the network protocol level</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Tor network using onion routing with multiple encrypted layers, where each relay only knows the previous and next hop, preventing any single entity from tracing complete communication paths.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Traffic Analysis Resistance</div>
-                                    <div>Preventing pattern recognition in network flows</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Metadata Protection</div>
-                                    <div>Hiding source, destination, timing, and volume information</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">VPN Technologies</div>
-                                <div class="concept-definition">Virtual Private Networks creating secure tunnels over public networks</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Corporate employees using IPSec VPN to securely access internal company resources from home, with all traffic encrypted and routed through company servers.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">IPSec</div>
-                                    <div>Internet Protocol Security for network layer encryption</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">WireGuard</div>
-                                    <div>Modern, efficient VPN protocol with simplified design</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Firewall & Intrusion Detection</div>
-                                <div class="concept-definition">Network security systems monitoring and controlling traffic based on security rules</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Enterprise firewall blocking all incoming connections except on ports 80 and 443, while IDS monitors for unusual patterns like port scanning or DDoS attacks.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Deep Packet Inspection</div>
-                                    <div>Analyzing packet contents beyond headers</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Behavioral Analysis</div>
-                                    <div>Detecting anomalies in network traffic patterns</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Application Security Domain -->
-            <div class="domain">
-                <div class="domain-header">💻 Application Security</div>
-                <div class="domain-content">
-                    <div class="category">
-                        <div class="category-header">Common Vulnerabilities & Attack Vectors</div>
-                        <div class="category-content">
-                            <div class="concept">
-                                <div class="concept-name">Web Application Attacks</div>
-                                <div class="concept-definition">Attacks targeting vulnerabilities in web applications and their underlying infrastructure</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> SQL injection attack on a login form where attacker inputs "'; DROP TABLE users; --" causing the database to delete user records instead of checking credentials.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">OWASP Top 10</div>
-                                    <div>
-                                        <span class="attack-type">SQL Injection</span>
-                                        <span class="attack-type">Cross-Site Scripting (XSS)</span>
-                                        <span class="attack-type">Cross-Site Request Forgery (CSRF)</span>
-                                        <span class="attack-type">Insecure Direct Object References</span>
-                                        <span class="attack-type">Security Misconfiguration</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Network-Based Attacks</div>
-                                <div class="concept-definition">Attacks exploiting network protocols and infrastructure vulnerabilities</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Man-in-the-middle attack on public WiFi where attacker intercepts unencrypted communications between users and websites, stealing login credentials.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Network Attack Types</div>
-                                    <div>
-                                        <span class="attack-type">DDoS Attacks</span>
-                                        <span class="attack-type">Man-in-the-Middle</span>
-                                        <span class="attack-type">DNS Spoofing</span>
-                                        <span class="attack-type">ARP Poisoning</span>
-                                        <span class="attack-type">Port Scanning</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Social Engineering</div>
-                                <div class="concept-definition">Psychological manipulation techniques to trick users into revealing information or performing actions</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Phishing email appearing to be from a bank asking users to "verify" their account by clicking a malicious link and entering credentials on a fake banking website.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Social Engineering Types</div>
-                                    <div>
-                                        <span class="attack-type">Phishing</span>
-                                        <span class="attack-type">Spear Phishing</span>
-                                        <span class="attack-type">Pretexting</span>
-                                        <span class="attack-type">Baiting</span>
-                                        <span class="attack-type">Tailgating</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cloud Security Domain -->
-            <div class="domain">
-                <div class="domain-header">☁️ Cloud Security</div>
-                <div class="domain-content">
-                    <div class="category">
-                        <div class="category-header">Cloud Security Models & Technologies</div>
-                        <div class="category-content">
-                            <div class="concept">
-                                <div class="concept-name">Shared Responsibility Model</div>
-                                <div class="concept-definition">Security framework defining responsibilities between cloud provider and customer</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> AWS responsible for securing underlying infrastructure, while customers secure their applications, data, and access controls - like AWS managing data center security while customers configure S3 bucket permissions.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Provider Responsibilities</div>
-                                    <div>Infrastructure, platform, and physical security</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Customer Responsibilities</div>
-                                    <div>Data, applications, access management, and configuration</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Container Security</div>
-                                <div class="concept-definition">Securing containerized applications and orchestration platforms</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Docker containers with minimal base images, non-root users, and Kubernetes pod security policies preventing privilege escalation and limiting resource access.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Image Scanning</div>
-                                    <div>Vulnerability assessment of container images</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Runtime Protection</div>
-                                    <div>Monitoring container behavior during execution</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Emerging Technologies Domain -->
-            <div class="domain">
-                <div class="domain-header">🚀 Emerging Technologies & Future Trends</div>
-                <div class="domain-content">
-                    <div class="category">
-                        <div class="category-header">Next-Generation Security Technologies</div>
-                        <div class="category-content">
-                            <div class="concept">
-                                <div class="concept-name">Quantum-Resistant Cryptography</div>
-                                <div class="concept-definition">Cryptographic algorithms designed to withstand attacks from quantum computers</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> NIST standardizing post-quantum cryptographic algorithms like CRYSTALS-Kyber for key exchange and CRYSTALS-Dilithium for digital signatures to replace current RSA and ECC systems.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Lattice-Based Cryptography</div>
-                                    <div>Security based on lattice problems in high-dimensional spaces</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Code-Based Cryptography</div>
-                                    <div>Security based on error-correcting codes</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">AI/ML Security</div>
-                                <div class="concept-definition">Securing artificial intelligence and machine learning systems against adversarial attacks</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Adversarial patches placed on stop signs causing autonomous vehicles to misclassify them as speed limit signs, highlighting the need for robust ML model security.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Adversarial Examples</div>
-                                    <div>Inputs designed to fool machine learning models</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Model Extraction</div>
-                                    <div>Stealing ML models through API queries</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Latest Security Technologies</div>
-                                <div class="concept-definition">Cutting-edge technologies shaping the future of cybersecurity</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Zero Trust Architecture implemented by companies like Google with BeyondCorp, where every access request is verified regardless of location or previous authentication.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Current Technologies</div>
-                                    <div>
-                                        <span class="tech-badge">Zero Trust Architecture</span>
-                                        <span class="tech-badge">SASE (Secure Access Service Edge)</span>
-                                        <span class="tech-badge">XDR (Extended Detection & Response)</span>
-                                        <span class="tech-badge">SOAR (Security Orchestration)</span>
-                                        <span class="tech-badge">Confidential Computing</span>
-                                        <span class="tech-badge">Hardware Security Modules</span>
-                                        <span class="tech-badge">Behavioral Analytics</span>
-                                        <span class="tech-badge">Deception Technology</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Data Security Domain -->
-            <div class="domain">
-                <div class="domain-header">📊 Data Security & Privacy</div>
-                <div class="domain-content">
-                    <div class="category">
-                        <div class="category-header">Data Protection Strategies</div>
-                        <div class="category-content">
-                            <div class="concept">
-                                <div class="concept-name">Data Loss Prevention (DLP)</div>
-                                <div class="concept-definition">Technologies and processes to prevent unauthorized data disclosure or exfiltration</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Email security gateway blocking outbound emails containing credit card numbers or social security numbers, preventing accidental data breaches by employees.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Content Inspection</div>
-                                    <div>Pattern matching, machine learning for sensitive data detection</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Policy Enforcement</div>
-                                    <div>Automated actions based on data classification rules</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Data Encryption at Rest and in Transit</div>
-                                <div class="concept-definition">Protecting data through encryption whether stored or being transmitted</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> WhatsApp using end-to-end encryption where messages are encrypted on sender's device and only decrypted on recipient's device, with even WhatsApp servers unable to read message contents.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Full Disk Encryption</div>
-                                    <div>BitLocker, FileVault for protecting stored data</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">TLS/SSL</div>
-                                    <div>Transport Layer Security for protecting data in transit</div>
-                                </div>
-                            </div>
-
-                            <div class="concept">
-                                <div class="concept-name">Privacy-Preserving Technologies</div>
-                                <div class="concept-definition">Techniques enabling data analysis while maintaining individual privacy</div>
-                                <div class="concept-example"><strong>Real-world Example:</strong> Apple's differential privacy in iOS adding statistical noise to user data before collection, allowing them to identify trends without compromising individual user privacy.</div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Differential Privacy</div>
-                                    <div>Mathematical framework for quantifying and limiting privacy loss</div>
-                                </div>
-                                <div class="subconcept">
-                                    <div class="subconcept-name">Secure Multi-party Computation</div>
-                                    <div>Collaborative computation without revealing inputs</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        
+        <div class="controls">
+            <button class="control-btn active" id="showAll">Show All</button>
+            <button class="control-btn" id="showInteractive">Interactive Only</button>
+            <button class="control-btn" id="showNonInteractive">Non-Interactive Only</button>
+            <button class="control-btn" id="expandAll">Expand All</button>
+            <button class="control-btn" id="collapseAll">Collapse All</button>
         </div>
+    </div>
 
-        <div class="navigation">
-            <button class="nav-button" onclick="window.print()">🖨️ Print Overview</button>
-            <button class="nav-button" onclick="toggleAllCategories()">📖 Expand All</button>
-            <button class="nav-button" onclick="scrollToTop()">⬆️ Back to Top</button>
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color legend-interactive"></div>
+            <span>Interactive Technologies</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color legend-non-interactive"></div>
+            <span>Non-Interactive Principles</span>
+        </div>
+    </div>
+
+    <div class="flowchart-container">
+        <div class="flowchart" id="flowchart">
+            
+            <!-- Core Principles (Non-Interactive) -->
+            <div class="domain-column">
+                <div class="flowchart-node non-interactive" data-category="principles">
+                    <button class="collapse-btn">−</button>
+                    <div class="node-header">
+                        🔐 Core Security Principles
+                        <span class="classification-badge">Non-Interactive</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="concept-item">
+                            <div class="concept-name">CIA Triad Foundation</div>
+                            <div class="concept-description">Fundamental principles of information security</div>
+                            <div class="concept-example">Confidentiality, Integrity, and Availability form the cornerstone of all security measures</div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Confidentiality</div>
+                            <div class="concept-description">Information accessible only to authorized parties</div>
+                            <div class="concept-example">Medical records encrypted with role-based access controls</div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Integrity</div>
+                            <div class="concept-description">Data accuracy and completeness throughout lifecycle</div>
+                            <div class="concept-example">Digital signatures on software updates preventing tampering</div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Availability</div>
+                            <div class="concept-description">Resources accessible when needed by authorized users</div>
+                            <div class="concept-example">Netflix's distributed architecture ensuring 99.9% uptime</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Identity & Access Management (Interactive) -->
+            <div class="domain-column">
+                <div class="flowchart-node interactive" data-category="iam">
+                    <button class="collapse-btn">−</button>
+                    <div class="node-header">
+                        🔑 Identity & Access Management
+                        <span class="classification-badge">Interactive</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="concept-item">
+                            <div class="concept-name">Multi-Factor Authentication</div>
+                            <div class="concept-description">Multiple credentials for identity verification</div>
+                            <div class="concept-example">Banking apps using password + SMS + biometrics</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">TOTP</span>
+                                <span class="tech-tag">Hardware Tokens</span>
+                                <span class="tech-tag">Biometrics</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Single Sign-On (SSO)</div>
+                            <div class="concept-description">One authentication for multiple systems</div>
+                            <div class="concept-example">Google account accessing Gmail, Drive, and YouTube</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">SAML</span>
+                                <span class="tech-tag">OAuth 2.0</span>
+                                <span class="tech-tag">OpenID Connect</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Role-Based Access Control</div>
+                            <div class="concept-description">Permissions based on user roles and attributes</div>
+                            <div class="concept-example">Hospital staff accessing patient data based on department</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">RBAC</span>
+                                <span class="tech-tag">ABAC</span>
+                                <span class="tech-tag">Zero Trust</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cryptographic Technologies (Interactive) -->
+            <div class="domain-column">
+                <div class="flowchart-node interactive" data-category="crypto">
+                    <button class="collapse-btn">−</button>
+                    <div class="node-header">
+                        🔒 Cryptographic Technologies
+                        <span class="classification-badge">Interactive</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="concept-item">
+                            <div class="concept-name">Public Key Infrastructure</div>
+                            <div class="concept-description">Framework for digital certificates and key management</div>
+                            <div class="concept-example">HTTPS certificates verified by Certificate Authorities</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">RSA</span>
+                                <span class="tech-tag">ECC</span>
+                                <span class="tech-tag">X.509</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Zero-Knowledge Proofs</div>
+                            <div class="concept-description">Prove knowledge without revealing information</div>
+                            <div class="concept-example">Zcash transactions proving sufficient funds without revealing balance</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">zk-SNARKs</span>
+                                <span class="tech-tag">zk-STARKs</span>
+                                <span class="tech-tag">Bulletproofs</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Homomorphic Encryption</div>
+                            <div class="concept-description">Computation on encrypted data without decryption</div>
+                            <div class="concept-example">Cloud analysis of encrypted patient data by hospitals</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">FHE</span>
+                                <span class="tech-tag">BGV</span>
+                                <span class="tech-tag">CKKS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Network Security (Interactive) -->
+            <div class="domain-column">
+                <div class="flowchart-node interactive" data-category="network">
+                    <button class="collapse-btn">−</button>
+                    <div class="node-header">
+                        🌐 Network Security Systems
+                        <span class="classification-badge">Interactive</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="concept-item">
+                            <div class="concept-name">Firewall Technologies</div>
+                            <div class="concept-description">Network traffic monitoring and control systems</div>
+                            <div class="concept-example">Enterprise firewalls blocking unauthorized connections with IDS monitoring</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">WAF</span>
+                                <span class="tech-tag">NGFW</span>
+                                <span class="tech-tag">IDS/IPS</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">VPN Technologies</div>
+                            <div class="concept-description">Secure tunnels over public networks</div>
+                            <div class="concept-example">Corporate VPN for secure remote access to internal resources</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">IPSec</span>
+                                <span class="tech-tag">WireGuard</span>
+                                <span class="tech-tag">OpenVPN</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Network Privacy</div>
+                            <div class="concept-description">Anonymous communication and traffic analysis resistance</div>
+                            <div class="concept-example">Tor network using onion routing for anonymous browsing</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Tor</span>
+                                <span class="tech-tag">I2P</span>
+                                <span class="tech-tag">Mix Networks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Application Security (Non-Interactive) -->
+            <div class="domain-column">
+                <div class="flowchart-node non-interactive" data-category="appsec">
+                    <button class="collapse-btn">−</button>
+                    <div class="node-header">
+                        💻 Application Vulnerabilities
+                        <span class="classification-badge">Non-Interactive</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="concept-item">
+                            <div class="concept-name">Web Application Attacks</div>
+                            <div class="concept-description">Common vulnerabilities in web applications</div>
+                            <div class="concept-example">SQL injection attacks on login forms deleting database records</div>
+                            <div class="tech-tags">
+                                <span class="attack-tag">SQL Injection</span>
+                                <span class="attack-tag">XSS</span>
+                                <span class="attack-tag">CSRF</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Social Engineering</div>
+                            <div class="concept-description">Psychological manipulation techniques</div>
+                            <div class="concept-example">Phishing emails mimicking banks to steal credentials</div>
+                            <div class="tech-tags">
+                                <span class="attack-tag">Phishing</span>
+                                <span class="attack-tag">Spear Phishing</span>
+                                <span class="attack-tag">Pretexting</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Network Attacks</div>
+                            <div class="concept-description">Attacks targeting network infrastructure</div>
+                            <div class="concept-example">Man-in-the-middle attacks on public WiFi intercepting communications</div>
+                            <div class="tech-tags">
+                                <span class="attack-tag">MITM</span>
+                                <span class="attack-tag">DDoS</span>
+                                <span class="attack-tag">DNS Spoofing</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blockchain Privacy (Interactive) -->
+            <div class="domain-column">
+                <div class="flowchart-node interactive" data-category="blockchain">
+                    <button class="collapse-btn">−</button>
+                    <div class="node-header">
+                        ⛓️ Blockchain Privacy Technologies
+                        <span class="classification-badge">Interactive</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="concept-item">
+                            <div class="concept-name">Privacy Coins</div>
+                            <div class="concept-description">Cryptocurrencies with built-in privacy features</div>
+                            <div class="concept-example">Monero using RingCT to hide sender, receiver, and amounts</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">RingCT</span>
+                                <span class="tech-tag">Stealth Addresses</span>
+                                <span class="tech-tag">Bulletproofs</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Mixing Services</div>
+                            <div class="concept-description">Services obscuring transaction trails</div>
+                            <div class="concept-example">CoinJoin protocols mixing multiple users' transactions</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">CoinJoin</span>
+                                <span class="tech-tag">Mixers</span>
+                                <span class="tech-tag">Tumblers</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Layer 2 Privacy</div>
+                            <div class="concept-description">Scaling solutions with privacy features</div>
+                            <div class="concept-example">zk-Rollups batching transactions with zero-knowledge proofs</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">zk-Rollups</span>
+                                <span class="tech-tag">State Channels</span>
+                                <span class="tech-tag">Plasma</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cloud Security (Interactive) -->
+            <div class="domain-column">
+                <div class="flowchart-node interactive" data-category="cloud">
+                    <button class="collapse-btn">−</button>
+                    <div class="node-header">
+                        ☁️ Cloud Security Platforms
+                        <span class="classification-badge">Interactive</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="concept-item">
+                            <div class="concept-name">Container Security</div>
+                            <div class="concept-description">Securing containerized applications and orchestration</div>
+                            <div class="concept-example">Docker containers with security scanning and Kubernetes pod policies</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Docker</span>
+                                <span class="tech-tag">Kubernetes</span>
+                                <span class="tech-tag">Image Scanning</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Cloud Access Security</div>
+                            <div class="concept-description">Secure access to cloud resources and services</div>
+                            <div class="concept-example">AWS IAM roles and policies controlling resource access</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">CASB</span>
+                                <span class="tech-tag">SASE</span>
+                                <span class="tech-tag">Zero Trust</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Serverless Security</div>
+                            <div class="concept-description">Security for function-as-a-service architectures</div>
+                            <div class="concept-example">AWS Lambda function security with proper IAM and monitoring</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">FaaS Security</span>
+                                <span class="tech-tag">Runtime Protection</span>
+                                <span class="tech-tag">Function Isolation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emerging Technologies (Interactive) -->
+            <div class="domain-column">
+                <div class="flowchart-node interactive" data-category="emerging">
+                    <button class="collapse-btn">−</button>
+                    <div class="node-header">
+                        🚀 Emerging Security Technologies
+                        <span class="classification-badge">Interactive</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="concept-item">
+                            <div class="concept-name">Quantum-Resistant Cryptography</div>
+                            <div class="concept-description">Post-quantum cryptographic algorithms</div>
+                            <div class="concept-example">NIST standardizing CRYSTALS-Kyber and Dilithium algorithms</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Lattice-based</span>
+                                <span class="tech-tag">CRYSTALS</span>
+                                <span class="tech-tag">Post-Quantum</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">AI/ML Security</div>
+                            <div class="concept-description">Securing artificial intelligence systems</div>
+                            <div class="concept-example">Adversarial patches causing autonomous vehicles to misclassify signs</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Adversarial ML</span>
+                                <span class="tech-tag">Model Security</span>
+                                <span class="tech-tag">Federated Learning</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Zero Trust Architecture</div>
+                            <div class="concept-description">Never trust, always verify security model</div>
+                            <div class="concept-example">Google's BeyondCorp verifying every access request regardless of location</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">ZTNA</span>
+                                <span class="tech-tag">Micro-segmentation</span>
+                                <span class="tech-tag">Continuous Verification</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Protection (Interactive) -->
+            <div class="domain-column">
+                <div class="flowchart-node interactive" data-category="data">
+                    <button class="collapse-btn">−</button>
+                    <div class="node-header">
+                        📊 Data Protection Systems
+                        <span class="classification-badge">Interactive</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="concept-item">
+                            <div class="concept-name">Data Loss Prevention</div>
+                            <div class="concept-description">Technologies preventing unauthorized data disclosure</div>
+                            <div class="concept-example">Email gateways blocking messages with credit card numbers</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Content Inspection</span>
+                                <span class="tech-tag">Policy Enforcement</span>
+                                <span class="tech-tag">Data Classification</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">Privacy-Preserving Analytics</div>
+                            <div class="concept-description">Data analysis while maintaining individual privacy</div>
+                            <div class="concept-example">Apple's differential privacy adding noise to user data collection</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Differential Privacy</span>
+                                <span class="tech-tag">Federated Learning</span>
+                                <span class="tech-tag">Secure MPC</span>
+                            </div>
+                        </div>
+                        <div class="concept-item">
+                            <div class="concept-name">End-to-End Encryption</div>
+                            <div class="concept-description">Encryption from sender to receiver only</div>
+                            <div class="concept-example">WhatsApp messages encrypted on device, unreadable by servers</div>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Signal Protocol</span>
+                                <span class="tech-tag">Double Ratchet</span>
+                                <span class="tech-tag">Perfect Forward Secrecy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal for detailed view -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2 id="modalTitle"></h2>
+            </div>
+            <div id="modalBody"></div>
         </div>
     </div>
 
     <script>
-        function toggleAllCategories() {
-            const categories = document.querySelectorAll('.category-content');
-            const isAnyHidden = Array.from(categories).some(cat => cat.style.display === 'none');
-            
-            categories.forEach(category => {
-                category.style.display = isAnyHidden ? 'block' : 'none';
-            });
-        }
+        // Global variables
+        let currentFilter = 'all';
+        let isExpanded = false;
 
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
-
-        // Add click handlers to category headers
-        document.querySelectorAll('.category-header').forEach(header => {
-            header.addEventListener('click', function() {
-                const content = this.nextElementSibling;
-                content.style.display = content.style.display === 'none' ? 'block' : 'none';
-            });
-        });
-
-        // Initialize with all categories visible
+        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.category-content').forEach(content => {
-                content.style.display = 'block';
-            });
+            initializeEventListeners();
+            createConnections();
+            animateNodes();
         });
 
-        // Add smooth scrolling for better UX
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+        // Event listeners
+        function initializeEventListeners() {
+            // Filter buttons
+            document.getElementById('showAll').addEventListener('click', () => setFilter('all'));
+            document.getElementById('showInteractive').addEventListener('click', () => setFilter('interactive'));
+            document.getElementById('showNonInteractive').addEventListener('click', () => setFilter('non-interactive'));
+            
+            // Control buttons
+            document.getElementById('expandAll').addEventListener('click', expandAllNodes);
+            document.getElementById('collapseAll').addEventListener('click', collapseAllNodes);
+            
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+            
+            // Collapse buttons
+            document.querySelectorAll('.collapse-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleNode(e.target.closest('.flowchart-node'));
                 });
             });
+            
+            // Node click handlers
+            document.querySelectorAll('.flowchart-node').forEach(node => {
+                node.addEventListener('click', () => showNodeDetails(node));
+            });
+            
+            // Modal close
+            document.querySelector('.close').addEventListener('click', closeModal);
+            document.getElementById('modal').addEventListener('click', (e) => {
+                if (e.target.id === 'modal') closeModal();
+            });
+        }
+
+        // Filter functions
+        function setFilter(filter) {
+            currentFilter = filter;
+            updateFilterButtons(filter);
+            
+            const nodes = document.querySelectorAll('.flowchart-node');
+            nodes.forEach(node => {
+                const isInteractive = node.classList.contains('interactive');
+                const isNonInteractive = node.classList.contains('non-interactive');
+                
+                let shouldShow = false;
+                switch(filter) {
+                    case 'all':
+                        shouldShow = true;
+                        break;
+                    case 'interactive':
+                        shouldShow = isInteractive;
+                        break;
+                    case 'non-interactive':
+                        shouldShow = isNonInteractive;
+                        break;
+                }
+                
+                if (shouldShow) {
+                    node.classList.remove('filter-inactive');
+                    node.classList.add('filter-active');
+                } else {
+                    node.classList.remove('filter-active');
+                    node.classList.add('filter-inactive');
+                }
+            });
+            
+            // Animate visible nodes
+            setTimeout(animateNodes, 100);
+        }
+
+        function updateFilterButtons(activeFilter) {
+            document.querySelectorAll('.control-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const buttonMap = {
+                'all': 'showAll',
+                'interactive': 'showInteractive',
+                'non-interactive': 'showNonInteractive'
+            };
+            
+            if (buttonMap[activeFilter]) {
+                document.getElementById(buttonMap[activeFilter]).classList.add('active');
+            }
+        }
+
+        // Node expansion/collapse
+        function toggleNode(node) {
+            const content = node.querySelector('.node-content');
+            const btn = node.querySelector('.collapse-btn');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                btn.textContent = '−';
+                node.classList.add('expanded');
+            } else {
+                content.style.display = 'none';
+                btn.textContent = '+';
+                node.classList.remove('expanded');
+            }
+        }
+
+        function expandAllNodes() {
+            document.querySelectorAll('.flowchart-node').forEach(node => {
+                const content = node.querySelector('.node-content');
+                const btn = node.querySelector('.collapse-btn');
+                content.style.display = 'block';
+                btn.textContent = '−';
+                node.classList.add('expanded');
+            });
+            isExpanded = true;
+        }
+
+        function collapseAllNodes() {
+            document.querySelectorAll('.flowchart-node').forEach(node => {
+                const content = node.querySelector('.node-content');
+                const btn = node.querySelector('.collapse-btn');
+                content.style.display = 'none';
+                btn.textContent = '+';
+                node.classList.remove('expanded');
+            });
+            isExpanded = false;
+        }
+
+        // Search functionality
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const nodes = document.querySelectorAll('.flowchart-node');
+            
+            nodes.forEach(node => {
+                const content = node.textContent.toLowerCase();
+                const shouldShow = content.includes(query);
+                
+                if (query === '') {
+                    // Reset to current filter
+                    setFilter(currentFilter);
+                } else {
+                    if (shouldShow) {
+                        node.style.display = 'block';
+                        node.style.opacity = '1';
+                        // Expand node to show search results
+                        const content = node.querySelector('.node-content');
+                        const btn = node.querySelector('.collapse-btn');
+                        content.style.display = 'block';
+                        btn.textContent = '−';
+                    } else {
+                        node.style.display = 'none';
+                        node.style.opacity = '0.3';
+                    }
+                }
+            });
+        }
+
+        // Modal functions
+        function showNodeDetails(node) {
+            const title = node.querySelector('.node-header').textContent.trim();
+            const concepts = node.querySelectorAll('.concept-item');
+            const classification = node.classList.contains('interactive') ? 'Interactive' : 'Non-Interactive';
+            
+            let modalContent = `
+                <div style="background: ${node.classList.contains('interactive') ? 'linear-gradient(135deg, #27ae60, #2ecc71)' : 'linear-gradient(135deg, #e74c3c, #c0392b)'}; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3>Classification: ${classification}</h3>
+                    <p>${classification === 'Interactive' ? 'Technologies and systems that users directly interact with or configure' : 'Fundamental principles and theoretical concepts that guide security practices'}</p>
+                </div>
+            `;
+            
+            concepts.forEach(concept => {
+                const name = concept.querySelector('.concept-name').textContent;
+                const description = concept.querySelector('.concept-description').textContent;
+                const example = concept.querySelector('.concept-example').textContent;
+                const tags = concept.querySelectorAll('.tech-tag, .attack-tag');
+                
+                modalContent += `
+                    <div style="margin-bottom: 25px; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background: #f9f9f9;">
+                        <h4 style="color: #2c3e50; margin-bottom: 10px;">${name}</h4>
+                        <p style="margin-bottom: 10px; color: #555;"><strong>Description:</strong> ${description}</p>
+                        <p style="margin-bottom: 15px; color: #666; font-style: italic;"><strong>Example:</strong> ${example}</p>
+                        ${tags.length > 0 ? `
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                ${Array.from(tags).map(tag => `<span style="background: ${tag.classList.contains('tech-tag') ? 'linear-gradient(135deg, #9b59b6, #8e44ad)' : 'linear-gradient(135deg, #e67e22, #d35400)'}; color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem;">${tag.textContent}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Animation functions
+        function animateNodes() {
+            const nodes = document.querySelectorAll('.flowchart-node.filter-active');
+            nodes.forEach((node, index) => {
+                node.style.animation = 'none';
+                setTimeout(() => {
+                    node.style.animation = `slideInUp 0.6s ease-out ${index * 0.1}s both`;
+                }, 50);
+            });
+        }
+
+        function createConnections() {
+            // This function could create visual connections between related nodes
+            // For now, we'll add some CSS animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                @keyframes pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
+                }
+                
+                .flowchart-node:hover {
+                    animation: pulse 2s infinite;
+                }
+                
+                .concept-item {
+                    transition: all 0.3s ease;
+                }
+                
+                .concept-item:hover {
+                    transform: translateX(10px);
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                }
+                
+                .tech-tag, .attack-tag {
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                }
+                
+                .tech-tag:hover, .attack-tag:hover {
+                    transform: scale(1.1);
+                    filter: brightness(1.1);
+                }
+                
+                .node-content {
+                    max-height: 400px;
+                    overflow-y: auto;
+                    scrollbar-width: thin;
+                    scrollbar-color: #bbb #f1f1f1;
+                }
+                
+                .node-content::-webkit-scrollbar {
+                    width: 6px;
+                }
+                
+                .node-content::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                    border-radius: 3px;
+                }
+                
+                .node-content::-webkit-scrollbar-thumb {
+                    background: #bbb;
+                    border-radius: 3px;
+                }
+                
+                .node-content::-webkit-scrollbar-thumb:hover {
+                    background: #999;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        setFilter('all');
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        setFilter('interactive');
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        setFilter('non-interactive');
+                        break;
+                    case 'e':
+                        e.preventDefault();
+                        expandAllNodes();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        collapseAllNodes();
+                        break;
+                }
+            }
         });
+
+        // Add tooltips for better UX
+        function addTooltips() {
+            const style = document.createElement('style');
+            style.textContent = `
+                [data-tooltip] {
+                    position: relative;
+                }
+                
+                [data-tooltip]:before {
+                    content: attr(data-tooltip);
+                    position: absolute;
+                    background: rgba(0,0,0,0.8);
+                    color: white;
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    font-size: 0.8rem;
+                    white-space: nowrap;
+                    z-index: 1000;
+                    bottom: 100%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    opacity: 0;
+                    pointer-events: none;
+                    transition: opacity 0.3s;
+                }
+                
+                [data-tooltip]:hover:before {
+                    opacity: 1;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        addTooltips();
+        
+        // Add keyboard shortcut hints
+        const shortcutHints = document.createElement('div');
+        shortcutHints.innerHTML = `
+            <div style="position: fixed; bottom: 20px; left: 20px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 10px; font-size: 0.8rem; z-index: 1000;">
+                <div><strong>Keyboard Shortcuts:</strong></div>
+                <div>Ctrl+1: Show All | Ctrl+2: Interactive Only | Ctrl+3: Non-Interactive Only</div>
+                <div>Ctrl+E: Expand All | Ctrl+R: Collapse All | ESC: Close Modal</div>
+            </div>
+        `;
+        document.body.appendChild(shortcutHints);
+        
+        // Auto-hide shortcuts after 10 seconds
+        setTimeout(() => {
+            shortcutHints.style.transition = 'opacity 1s';
+            shortcutHints.style.opacity = '0';
+            setTimeout(() => shortcutHints.remove(), 1000);
+        }, 10000);
     </script>
 </body>
 </html>
